@@ -14,18 +14,19 @@
 use std::fs::File;
 use std::io;
 use std::mem::MaybeUninit;
+use std::fmt;
 use rustix::fd::AsRawFd;
 
 use linux_sed_opal_sys::*;
 
 #[derive(Debug)]
 pub struct Status {
-    supported: bool, //1
-    locking_supported: bool, // 2
-    locking_enabled: bool, // 4
-    locked: bool, // 8
-    mbr_enabled: bool, // 16
-    mbr_done: bool, // 32
+    pub supported: bool, //1
+    pub locking_supported: bool, // 2
+    pub locking_enabled: bool, // 4
+    pub locked: bool, // 8
+    pub mbr_enabled: bool, // 16
+    pub mbr_done: bool, // 32
 }
 
 impl From<&opal_status> for Status {
@@ -44,6 +45,21 @@ impl From<&opal_status> for Status {
 impl From<opal_status> for Status {
     fn from(s: opal_status) -> Self {
         (&s).into()
+    }
+}
+
+impl fmt::Display for Status {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let supported = |flag| if flag { "supported" } else { "unsupported" };
+        let enabled = |flag| if flag { "enabled" } else { "disabled" };
+        let on = |flag| if flag { "on" } else { "off" };
+        write!(f, "{}, locking {}, locking {}, locking {}, mbr {}, mbr {}",
+            supported(self.supported),
+            supported(self.locking_supported),
+            enabled(self.locking_enabled),
+            on(self.locked),
+            enabled(self.mbr_enabled),
+            on(!self.mbr_done))
     }
 }
 

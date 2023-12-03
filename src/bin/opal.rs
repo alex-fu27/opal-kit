@@ -16,7 +16,7 @@ use std::fs;
 use std::io;
 use regex::Regex;
 
-use opal_kit::Disk;
+use opal_kit::{Disk, Status};
 
 #[derive(Parser, Debug)]
 struct LockArgs {
@@ -73,7 +73,7 @@ fn subcommand_list(devices: &Vec<String>) {
     for d in devices {
         let disk = Disk::open(&d).unwrap();
         match disk.get_status() {
-            Ok(status) => println!("{} {:?}", d, status),
+            Ok(status) => println!("{} {}", d, status),
             Err(_) => println!("{} Unsupported", d),
         }
     }
