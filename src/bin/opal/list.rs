@@ -11,26 +11,16 @@
  * You should have received a copy of the GNU General Public License along with opal-kit. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-mod list;
-mod args;
 
-use args::Command;
+use opal_kit::Disk;
 
-fn main() {
-    let args = args::parse();
-    let common_args = args.common_args;
-    let command = args.command;
-    env_logger::Builder::from_default_env()
-        .filter(None, log::LevelFilter::Debug)
-        .try_init();
-    /*
-    let devs = if common_args.drives.is_empty() {
-        list_devices().unwrap()
-    } else {
-        common_args.drives.clone()
-    };*/
-    match &command {
-        Command::List => list::subcommand(&common_args.drives),
-        _ => println!("{:?} {:?}", &common_args, &command),
+pub fn subcommand(devices: &Vec<String>) {
+    for d in devices {
+        let disk = Disk::open(&d).unwrap();
+        match disk.get_status() {
+            Ok(status) => println!("{} {}", d, status),
+            Err(_) => println!("{} Unsupported", d),
+        }
     }
 }
+
