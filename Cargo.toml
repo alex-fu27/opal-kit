@@ -7,7 +7,6 @@ license = "GPLv3"
 [dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
 libc = "0.2"
-rustix = "0.38"
 nix = { version = "0.27" }
 linux-sed-opal-sys = { version = "0.1", features = [ "linux_6_1" ] }
 regex = "1.9.1"

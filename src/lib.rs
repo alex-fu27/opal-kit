@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with opal-kit. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-use rustix::fd::AsRawFd;
+use std::os::fd::AsRawFd;
 use std::fmt;
 use std::fs::File;
 use std::io;

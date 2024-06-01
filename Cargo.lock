@@ -352,7 +352,6 @@ dependencies = [
  "log",
  "nix",
  "regex",
- "rustix",
 ]
 
 [[package]]
