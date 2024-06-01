@@ -11,11 +11,11 @@
  * You should have received a copy of the GNU General Public License along with opal-kit. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-use std::os::fd::AsRawFd;
 use std::fmt;
 use std::fs::File;
 use std::io;
 use std::mem::MaybeUninit;
+use std::os::fd::AsRawFd;
 
 mod c;
 use c::*;
@@ -91,6 +91,17 @@ impl Disk {
                 panic!("hmm");
             }
             Ok(status.assume_init().into())
+        }
+    }
+
+    pub fn get_id(&self) -> nvme_id {
+        let mut out = MaybeUninit::<nvme_id>::uninit();
+        unsafe {
+            let err = c::identify(self.get_raw_fd(), out.as_mut_ptr());
+            if err < 0 {
+                panic!("aaa");
+            }
+            out.assume_init().into()
         }
     }
 }

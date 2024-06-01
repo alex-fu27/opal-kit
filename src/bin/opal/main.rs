@@ -23,7 +23,8 @@ fn main() {
 
     env_logger::Builder::from_default_env()
         .filter(None, log::LevelFilter::Debug)
-        .try_init().unwrap();
+        .try_init()
+        .unwrap();
 
     match &command {
         Command::List => list::subcommand(&common_args.drives),

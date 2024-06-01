@@ -3,6 +3,9 @@ use std::env;
 use std::path::PathBuf;
 
 fn main() {
+    println!("cargo::rerun-if-changed=csrc/lib.c");
+    println!("cargo::rerun-if-changed=csrc/lib.h");
+
     let build = builder()
         .header("csrc/lib.h")
         .default_enum_style(EnumVariation::NewType {
@@ -22,8 +25,5 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings");
 
-	 cc::Build::new()
-		 .file("csrc/lib.c")
-		 .compile("lib");
+    cc::Build::new().file("csrc/lib.c").compile("lib");
 }
-
