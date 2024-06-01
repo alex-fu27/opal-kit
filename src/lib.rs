@@ -17,7 +17,8 @@ use std::fs::File;
 use std::io;
 use std::mem::MaybeUninit;
 
-use linux_sed_opal_sys::*;
+mod c;
+use c::*;
 
 #[derive(Debug)]
 pub struct Status {
@@ -83,13 +84,13 @@ impl Disk {
     }
 
     pub fn get_status(&self) -> nix::Result<Status> {
-        let mut status = MaybeUninit::<[opal_status; 1]>::uninit();
+        let mut status = MaybeUninit::<opal_status>::uninit();
         unsafe {
-            let err = ioc_opal_get_status(self.get_raw_fd(), &mut *status.as_mut_ptr())?;
+            let err = c::get_status(self.get_raw_fd(), status.as_mut_ptr());
             if err < 0 {
                 panic!("hmm");
             }
-            Ok(status.assume_init()[0].into())
+            Ok(status.assume_init().into())
         }
     }
 }
