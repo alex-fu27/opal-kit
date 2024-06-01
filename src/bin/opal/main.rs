@@ -31,6 +31,6 @@ fn main() {
     };*/
     match &command {
         Command::List => list::subcommand(&common_args.drives),
-        _ => println!("{:?} {:?}", &common_args, &command),
+        _ => panic!("not implemented {:?} {:?}", &common_args, &command),
     }
 }
