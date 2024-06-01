@@ -1,6 +1,6 @@
 {
 	inputs = {
-		nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+		nixpkgs.url = "nixpkgs/nixos-24.05";
 		utils.url = "github:numtide/flake-utils";
 	};
 
@@ -15,13 +15,14 @@
 						cargo rustc rustfmt rustPackages.clippy clang
 					];
 
-					RUSTC_VERSION = "1.74.0";
+					LIBCLANG_PATH = pkgs.lib.makeLibraryPath [ pkgs.llvmPackages_latest.libclang.lib ];
 
 					# https://github.com/rust-lang/rust-bindgen#environment-variables
 					BINDGEN_EXTRA_CLANG_ARGS =
 					(builtins.map (a: ''-I"${a}/include"'') [
-					# TODO make bindgen use linux headers instead of glib headers
-						pkgs.linux.dev
+						# TODO is this still using glib headers?
+						# use the default kernel package of the current nixos here to (at a minimum) support most nixos installations
+						pkgs.linuxPackages.kernel.dev
 					]);
 				};
 			});
