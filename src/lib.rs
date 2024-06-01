@@ -1,32 +1,32 @@
 /* This file is part of opal-kit.
- * 
+ *
  * opal-kit is free software: you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * opal-kit is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with opal-kit. If not,
  * see <https://www.gnu.org/licenses/>.
  */
+use rustix::fd::AsRawFd;
+use std::fmt;
 use std::fs::File;
 use std::io;
 use std::mem::MaybeUninit;
-use std::fmt;
-use rustix::fd::AsRawFd;
 
 use linux_sed_opal_sys::*;
 
 #[derive(Debug)]
 pub struct Status {
-    pub supported: bool, //1
+    pub supported: bool,         //1
     pub locking_supported: bool, // 2
-    pub locking_enabled: bool, // 4
-    pub locked: bool, // 8
-    pub mbr_enabled: bool, // 16
-    pub mbr_done: bool, // 32
+    pub locking_enabled: bool,   // 4
+    pub locked: bool,            // 8
+    pub mbr_enabled: bool,       // 16
+    pub mbr_done: bool,          // 32
 }
 
 impl From<&opal_status> for Status {
@@ -53,13 +53,16 @@ impl fmt::Display for Status {
         let supported = |flag| if flag { "supported" } else { "unsupported" };
         let enabled = |flag| if flag { "enabled" } else { "disabled" };
         let on = |flag| if flag { "on" } else { "off" };
-        write!(f, "{}, locking {}, locking {}, locking {}, mbr {}, mbr {}",
+        write!(
+            f,
+            "{}, locking {}, locking {}, locking {}, mbr {}, mbr {}",
             supported(self.supported),
             supported(self.locking_supported),
             enabled(self.locking_enabled),
             on(self.locked),
             enabled(self.mbr_enabled),
-            on(!self.mbr_done))
+            on(!self.mbr_done)
+        )
     }
 }
 
@@ -90,4 +93,3 @@ impl Disk {
         }
     }
 }
-
