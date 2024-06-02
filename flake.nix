@@ -12,7 +12,7 @@
 			{
 				devShell = with pkgs; mkShell {
 					nativeBuildInputs = with pkgs; [
-						cargo rustc rustfmt rustPackages.clippy clang
+						cargo rustc rustfmt rustPackages.clippy clang gdb
 					];
 
 					LIBCLANG_PATH = pkgs.lib.makeLibraryPath [ pkgs.llvmPackages_latest.libclang.lib ];
