@@ -18,6 +18,7 @@ use std::mem::MaybeUninit;
 use std::os::fd::AsRawFd;
 
 mod c;
+mod hashing;
 use c::*;
 
 #[derive(Debug)]
