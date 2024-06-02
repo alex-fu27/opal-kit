@@ -45,7 +45,7 @@ pub fn ladar_sedutil_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
     sedutil_hash::<Sha512>(password, salt)
 }
 
-pub fn hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
+pub fn argon2_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
     if password.len() == 0 {
         return vec![];
     }

@@ -12,7 +12,7 @@
  * see <https://www.gnu.org/licenses/>.
  */
 use super::args::{Hash, HashVariant};
-use opal_kit::hashing::{dta_sedutil_hash, ladar_sedutil_hash};
+use opal_kit::hashing::{argon2_hash, dta_sedutil_hash, ladar_sedutil_hash};
 use opal_kit::Disk;
 use rpassword::*;
 
@@ -28,10 +28,10 @@ pub fn subcommand(args: &Hash) {
         .expect("could not read password");
 
     let hash = match args.variant {
-		HashVariant::Sedutil => dta_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
-		HashVariant::SedutilSHA512 => ladar_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
-		HashVariant::Argon2id => panic!("I need to research proper parameters for the Argon2id algorithm before fixing the hash algorithm here forever."),
-	 };
+        HashVariant::Sedutil => dta_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
+        HashVariant::SedutilSHA512 => ladar_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
+        HashVariant::Argon2id => argon2_hash(&passwd.as_bytes(), &id.serial_number),
+    };
 
     println!("{}", hex::encode(hash));
 }
