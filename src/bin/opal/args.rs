@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with opal-kit. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Parser, Subcommand, ValueEnum};
 
 use regex::Regex;
 use std::fs;
@@ -37,12 +37,28 @@ pub struct MBR {
     command: MBRCommand,
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+pub enum HashVariant {
+    Argon2id,
+    Sedutil,
+    SedutilSHA512,
+}
+
+#[derive(Parser, Debug)]
+pub struct Hash {
+    #[command(flatten)]
+    pub common_args: Common,
+
+    #[arg(short, long, default_value = "argon2id")]
+    pub variant: HashVariant,
+}
+
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    List,
+    List(Common),
     Lock(Lock),
     Unlock(Lock),
-    Save(Lock),
+    Hash(Hash),
     MBR(MBR),
 }
 
@@ -55,9 +71,6 @@ pub struct Common {
 #[derive(Parser, Debug)]
 #[command(version, about = "Manipulate TCG OPAL 2.0 compliant drives")]
 pub struct Full {
-    #[command(flatten)]
-    pub common_args: Common,
-
     #[command(subcommand)]
     pub command: Command,
 }
@@ -75,10 +88,16 @@ fn list_devices() -> io::Result<Vec<String>> {
         .collect())
 }
 
-pub fn parse() -> Full {
-    let mut args = Full::parse();
-    if args.common_args.drives.is_empty() {
-        args.common_args.drives = list_devices().unwrap();
+impl Common {
+    pub fn get_drives(&self) -> Vec<String> {
+        if self.drives.is_empty() {
+            list_devices().unwrap()
+        } else {
+            self.drives.clone()
+        }
     }
-    args
+}
+
+pub fn parse() -> Full {
+    Full::parse()
 }

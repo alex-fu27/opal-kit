@@ -12,9 +12,11 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
+use super::args;
 use opal_kit::Disk;
 
-pub fn subcommand(devices: &Vec<String>) {
+pub fn subcommand(args: &args::Common) {
+    let devices = args.get_drives();
     for d in devices {
         let disk = Disk::open(&d).unwrap();
         match disk.get_status() {

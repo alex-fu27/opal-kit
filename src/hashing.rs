@@ -35,17 +35,17 @@ where
     return out;
 }
 
-// used by github forks Drive-Trust-Alliance, fabiogermann, ...
-fn dta_sedutil_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
+// used by sedutil forks Drive-Trust-Alliance, fabiogermann, ...
+pub fn dta_sedutil_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
     sedutil_hash::<Sha1>(password, salt)
 }
 
-// used by github forks ladar, ...
-fn ladar_sedutil_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
+// used by sedutil forks ladar, ...
+pub fn ladar_sedutil_hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
     sedutil_hash::<Sha512>(password, salt)
 }
 
-fn hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
+pub fn hash(password: &[u8], salt: &[u8]) -> Vec<u8> {
     if password.len() == 0 {
         return vec![];
     }

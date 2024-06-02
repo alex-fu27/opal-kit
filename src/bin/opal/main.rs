@@ -12,13 +12,13 @@
  * see <https://www.gnu.org/licenses/>.
  */
 mod args;
+mod hash;
 mod list;
 
 use args::Command;
 
 fn main() {
     let args = args::parse();
-    let common_args = args.common_args;
     let command = args.command;
 
     env_logger::Builder::from_default_env()
@@ -27,7 +27,8 @@ fn main() {
         .unwrap();
 
     match &command {
-        Command::List => list::subcommand(&common_args.drives),
-        _ => panic!("not implemented {:?} {:?}", &common_args, &command),
+        Command::List(common_args) => list::subcommand(&common_args),
+        Command::Hash(hargs) => hash::subcommand(&hargs),
+        _ => panic!("not implemented {:?}", &command),
     }
 }
