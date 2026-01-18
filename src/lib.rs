@@ -23,86 +23,86 @@ use c::*;
 
 #[derive(Debug)]
 pub struct Status {
-    pub supported: bool,         //1
-    pub locking_supported: bool, // 2
-    pub locking_enabled: bool,   // 4
-    pub locked: bool,            // 8
-    pub mbr_enabled: bool,       // 16
-    pub mbr_done: bool,          // 32
+	pub supported: bool,         //1
+	pub locking_supported: bool, // 2
+	pub locking_enabled: bool,   // 4
+	pub locked: bool,            // 8
+	pub mbr_enabled: bool,       // 16
+	pub mbr_done: bool,          // 32
 }
 
 impl From<&opal_status> for Status {
-    fn from(s: &opal_status) -> Self {
-        Self {
-            supported: (s.flags & OPAL_FL_SUPPORTED) != 0,
-            locking_supported: (s.flags & OPAL_FL_SUPPORTED) != 0,
-            locking_enabled: (s.flags & OPAL_FL_LOCKING_ENABLED) != 0,
-            locked: (s.flags & OPAL_FL_LOCKED) != 0,
-            mbr_enabled: (s.flags & OPAL_FL_MBR_ENABLED) != 0,
-            mbr_done: (s.flags & OPAL_FL_MBR_DONE) != 0,
-        }
-    }
+	fn from(s: &opal_status) -> Self {
+		Self {
+			supported: (s.flags & OPAL_FL_SUPPORTED) != 0,
+			locking_supported: (s.flags & OPAL_FL_SUPPORTED) != 0,
+			locking_enabled: (s.flags & OPAL_FL_LOCKING_ENABLED) != 0,
+			locked: (s.flags & OPAL_FL_LOCKED) != 0,
+			mbr_enabled: (s.flags & OPAL_FL_MBR_ENABLED) != 0,
+			mbr_done: (s.flags & OPAL_FL_MBR_DONE) != 0,
+		}
+	}
 }
 
 impl From<opal_status> for Status {
-    fn from(s: opal_status) -> Self {
-        (&s).into()
-    }
+	fn from(s: opal_status) -> Self {
+		(&s).into()
+	}
 }
 
 impl fmt::Display for Status {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let supported = |flag| if flag { "supported" } else { "unsupported" };
-        let enabled = |flag| if flag { "enabled" } else { "disabled" };
-        let on = |flag| if flag { "on" } else { "off" };
-        write!(
-            f,
-            "{}, locking {}, locking {}, locking {}, mbr {}, mbr {}",
-            supported(self.supported),
-            supported(self.locking_supported),
-            enabled(self.locking_enabled),
-            on(self.locked),
-            enabled(self.mbr_enabled),
-            on(!self.mbr_done)
-        )
-    }
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		let supported = |flag| if flag { "supported" } else { "unsupported" };
+		let enabled = |flag| if flag { "enabled" } else { "disabled" };
+		let on = |flag| if flag { "on" } else { "off" };
+		write!(
+			f,
+			"{}, locking {}, locking {}, locking {}, mbr {}, mbr {}",
+			supported(self.supported),
+			supported(self.locking_supported),
+			enabled(self.locking_enabled),
+			on(self.locked),
+			enabled(self.mbr_enabled),
+			on(!self.mbr_done)
+		)
+	}
 }
 
 #[derive(Debug)]
 pub struct Disk {
-    file: File,
+	file: File,
 }
 
 impl Disk {
-    pub fn open(path: &str) -> io::Result<Self> {
-        Ok(Self {
-            file: File::open(&path)?,
-        })
-    }
+	pub fn open(path: &str) -> io::Result<Self> {
+		Ok(Self {
+			file: File::open(&path)?,
+		})
+	}
 
-    fn get_raw_fd(&self) -> i32 {
-        self.file.as_raw_fd()
-    }
+	fn get_raw_fd(&self) -> i32 {
+		self.file.as_raw_fd()
+	}
 
-    pub fn get_status(&self) -> nix::Result<Status> {
-        let mut status = MaybeUninit::<opal_status>::uninit();
-        unsafe {
-            let err = c::get_status(self.get_raw_fd(), status.as_mut_ptr());
-            if err < 0 {
-                panic!("hmm");
-            }
-            Ok(status.assume_init().into())
-        }
-    }
+	pub fn get_status(&self) -> nix::Result<Status> {
+		let mut status = MaybeUninit::<opal_status>::uninit();
+		unsafe {
+			let err = c::get_status(self.get_raw_fd(), status.as_mut_ptr());
+			if err < 0 {
+				panic!("hmm");
+			}
+			Ok(status.assume_init().into())
+		}
+	}
 
-    pub fn get_id(&self) -> nvme_id {
-        let mut out = MaybeUninit::<nvme_id>::uninit();
-        unsafe {
-            let err = c::identify(self.get_raw_fd(), out.as_mut_ptr());
-            if err < 0 {
-                panic!("aaa");
-            }
-            out.assume_init().into()
-        }
-    }
+	pub fn get_id(&self) -> nvme_id {
+		let mut out = MaybeUninit::<nvme_id>::uninit();
+		unsafe {
+			let err = c::identify(self.get_raw_fd(), out.as_mut_ptr());
+			if err < 0 {
+				panic!("aaa");
+			}
+			out.assume_init().into()
+		}
+	}
 }

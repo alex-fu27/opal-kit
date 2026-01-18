@@ -18,17 +18,17 @@ mod list;
 use args::Command;
 
 fn main() {
-    let args = args::parse();
-    let command = args.command;
+	let args = args::parse();
+	let command = args.command;
 
-    env_logger::Builder::from_default_env()
-        .filter(None, log::LevelFilter::Debug)
-        .try_init()
-        .unwrap();
+	env_logger::Builder::from_default_env()
+		.filter(None, log::LevelFilter::Debug)
+		.try_init()
+		.unwrap();
 
-    match &command {
-        Command::List(common_args) => list::subcommand(&common_args),
-        Command::Hash(hargs) => hash::subcommand(&hargs),
-        _ => panic!("not implemented {:?}", &command),
-    }
+	match &command {
+		Command::List(common_args) => list::subcommand(&common_args),
+		Command::Hash(hargs) => hash::subcommand(&hargs),
+		_ => panic!("not implemented {:?}", &command),
+	}
 }

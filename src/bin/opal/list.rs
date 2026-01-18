@@ -16,12 +16,12 @@ use super::args;
 use opal_kit::Disk;
 
 pub fn subcommand(args: &args::Common) {
-    let devices = args.get_drives();
-    for d in devices {
-        let disk = Disk::open(&d).unwrap();
-        match disk.get_status() {
-            Ok(status) => println!("{} {}", d, status),
-            Err(_) => println!("{} Unsupported", d),
-        }
-    }
+	let devices = args.get_drives();
+	for d in devices {
+		let disk = Disk::open(&d).unwrap();
+		match disk.get_status() {
+			Ok(status) => println!("{} {}", d, status),
+			Err(_) => println!("{} Unsupported", d),
+		}
+	}
 }

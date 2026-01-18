@@ -17,21 +17,21 @@ use opal_kit::Disk;
 use rpassword::*;
 
 pub fn subcommand(args: &Hash) {
-    let devices = args.common_args.get_drives();
-    if devices.len() != 1 {
-        panic!("specify exactly one device to hash the password for");
-    }
-    let device = &devices[0];
-    let id = Disk::open(device).expect("could not access disk").get_id();
+	let devices = args.common_args.get_drives();
+	if devices.len() != 1 {
+		panic!("specify exactly one device to hash the password for");
+	}
+	let device = &devices[0];
+	let id = Disk::open(device).expect("could not access disk").get_id();
 
-    let passwd = prompt_password(format!("enter password for {}: ", device))
-        .expect("could not read password");
+	let passwd =
+		prompt_password(format!("enter password for {}: ", device)).expect("could not read password");
 
-    let hash = match args.variant {
-        HashVariant::Sedutil => dta_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
-        HashVariant::SedutilSHA512 => ladar_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
-        HashVariant::Argon2id => argon2_hash(&passwd.as_bytes(), &id.serial_number),
-    };
+	let hash = match args.variant {
+		HashVariant::Sedutil => dta_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
+		HashVariant::SedutilSHA512 => ladar_sedutil_hash(&passwd.as_bytes(), &id.serial_number),
+		HashVariant::Argon2id => argon2_hash(&passwd.as_bytes(), &id.serial_number),
+	};
 
-    println!("{}", hex::encode(hash));
+	println!("{}", hex::encode(hash));
 }

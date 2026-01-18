@@ -19,85 +19,85 @@ use std::io;
 
 #[derive(Parser, Debug)]
 pub struct Lock {
-    #[arg(short, long, default_value = "0")]
-    range: u8,
+	#[arg(short, long, default_value = "0")]
+	range: u8,
 }
 
 #[derive(Subcommand, Debug)]
 pub enum MBRCommand {
-    On,
-    Off,
-    Enable,
-    Disable,
+	On,
+	Off,
+	Enable,
+	Disable,
 }
 
 #[derive(Parser, Debug)]
 pub struct MBR {
-    #[command(subcommand)]
-    command: MBRCommand,
+	#[command(subcommand)]
+	command: MBRCommand,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 pub enum HashVariant {
-    Argon2id,
-    Sedutil,
-    SedutilSHA512,
+	Argon2id,
+	Sedutil,
+	SedutilSHA512,
 }
 
 #[derive(Parser, Debug)]
 pub struct Hash {
-    #[command(flatten)]
-    pub common_args: Common,
+	#[command(flatten)]
+	pub common_args: Common,
 
-    #[arg(short, long, default_value = "argon2id")]
-    pub variant: HashVariant,
+	#[arg(short, long, default_value = "argon2id")]
+	pub variant: HashVariant,
 }
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    List(Common),
-    Lock(Lock),
-    Unlock(Lock),
-    Hash(Hash),
-    MBR(MBR),
+	List(Common),
+	Lock(Lock),
+	Unlock(Lock),
+	Hash(Hash),
+	MBR(MBR),
 }
 
 #[derive(Args, Debug)]
 pub struct Common {
-    #[arg()]
-    pub drives: Vec<String>,
+	#[arg()]
+	pub drives: Vec<String>,
 }
 
 #[derive(Parser, Debug)]
 #[command(version, about = "Manipulate TCG OPAL 2.0 compliant drives")]
 pub struct Full {
-    #[command(subcommand)]
-    pub command: Command,
+	#[command(subcommand)]
+	pub command: Command,
 }
 
 fn list_devices() -> io::Result<Vec<String>> {
-    let re = Regex::new(r"^/dev/((nvme\d\d*)n\d\d*|sd\w)$").unwrap();
-    let all = fs::read_dir("/dev")?;
-    let as_string = |e: io::Result<fs::DirEntry>| String::from(e.unwrap().path().to_str().unwrap());
-    Ok(all
-        .filter(|e| match e {
-            Ok(e) => re.is_match(e.path().to_str().unwrap()),
-            Err(_) => false,
-        })
-        .map(as_string)
-        .collect())
+	let re = Regex::new(r"^/dev/((nvme\d\d*)n\d\d*|sd\w)$").unwrap();
+	let all = fs::read_dir("/dev")?;
+	let as_string = |e: io::Result<fs::DirEntry>| String::from(e.unwrap().path().to_str().unwrap());
+	Ok(all
+		.filter(|e| match e {
+			Ok(e) => re.is_match(e.path().to_str().unwrap()),
+			Err(_) => false,
+		})
+		.map(as_string)
+		.collect())
 }
 
 impl Common {
-    pub fn get_drives(&self) -> Vec<String> {
-        if self.drives.is_empty() {
-            list_devices().unwrap()
-        } else {
-            self.drives.clone()
-        }
-    }
+	pub fn get_drives(&self) -> Vec<String> {
+		if self.drives.is_empty() {
+			list_devices().unwrap()
+		} else {
+			self.drives.clone()
+		}
+	}
 }
 
 pub fn parse() -> Full {
-    Full::parse()
+	Full::parse()
 }
