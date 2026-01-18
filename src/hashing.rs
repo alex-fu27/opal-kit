@@ -62,6 +62,7 @@ mod tests {
     use super::*;
     use hex_literal::hex;
 
+	 /// check if we can unlock devices locked by sedutil
     #[test]
     fn sedutil_compat() {
         let reference: [u8; 32] =
@@ -74,6 +75,7 @@ mod tests {
         assert_eq!(hashed, reference);
     }
 
+	 /// check if we can unlock devices locked (by ourselves) with an argon2 hash
     #[test]
     fn argon2_hash() {
         let password: [u8; 4] = [b'1', b'2', b'3', b'4'];
@@ -84,18 +86,20 @@ mod tests {
             232, 8, 203, 28, 46, 232, 29, 155, 250, 104, 240, 26, 19, 157, 159, 202, 76, 162, 67,
             79, 23, 13, 54, 201, 54, 60, 143, 172, 224, 188, 109, 103,
         ];
-        let hashed = hash(&password, &serno);
+        let hashed = argon2_hash(&password, &serno);
         assert_eq!(hashed, reference);
     }
 
+	 /// the hash algorithms all shall return an empty hash if invoked with an empty password.
+	 /// this is because setting an empty hash causes the device to auto-unlock.
     #[test]
-    fn empty_password_to_empty_hash() {
+    fn empty_password_produces_empty_hash() {
         let r: Vec<u8> = vec![];
         let serno: [u8; 20] = [
             50, 50, 52, 49, 51, 67, 49, 65, 55, 57, 49, 66, 32, 32, 32, 32, 32, 32, 32, 32,
         ];
         assert_eq!(r, dta_sedutil_hash(&[], &serno));
         assert_eq!(r, ladar_sedutil_hash(&[], &serno));
-        assert_eq!(r, hash(&[], &serno));
+        assert_eq!(r, argon2_hash(&[], &serno));
     }
 }
