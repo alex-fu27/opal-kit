@@ -6,26 +6,25 @@ license = "GPLv3"
 
 [build-dependencies]
 cc = "1.0"
-bindgen = "0.65"
+bindgen = "0.72"
 
 [dev-dependencies]
-hex-literal = "0.4"
+hex-literal = "1.1"
 
 [dependencies]
-clap = { version = "4.3.19", features = ["derive"] }
+clap = { version = "4.3", features = ["derive"] }
 libc = "0.2"
-nix = { version = "0.27" }
-regex = "1.9.1"
+nix = { version = "0.30" }
+regex = "1.9"
 errno = "0.3"
 hexdump = "*"
-env_logger = "0.10"
+env_logger = "0.11"
 log = "0.4"
 pbkdf2 = "0.12"
 sha2 = "0.10"
 sha1 = "0.10"
 digest = "0.10"
 typenum = "1.16"
-block-buffer = "0.10"
 argon2 = "0.5"
 rpassword = "7.3"
 hex = "0.4"

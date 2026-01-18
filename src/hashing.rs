@@ -1,7 +1,7 @@
 use argon2::Argon2;
-use block_buffer::Eager;
-use digest::core_api::*;
 use digest::HashMarker;
+use digest::block_buffer::Eager;
+use digest::core_api::*;
 use pbkdf2::pbkdf2_hmac;
 use sha1::Sha1;
 use sha2::Sha512;
